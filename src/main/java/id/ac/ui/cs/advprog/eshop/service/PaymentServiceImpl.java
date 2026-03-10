@@ -22,6 +22,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
+        if (!method.equals("Voucher Code") && !method.equals("Bank Transfer")) {
+            throw new IllegalArgumentException("Payment method not supported");
+        }
+
         Payment payment = new Payment(order, method, paymentData);
         return paymentRepository.save(payment);
     }
