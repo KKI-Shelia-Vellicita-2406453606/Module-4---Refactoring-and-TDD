@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Payment Admin List</title></head>
+<body>
+<h1>Payment Admin List</h1>
+<ul>
+    <li th:each="payment : ${payments}" th:text="${payment.id}"></li>
+</ul>
+</body>
+</html>
