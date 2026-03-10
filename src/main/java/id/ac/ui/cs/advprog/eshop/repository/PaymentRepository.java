@@ -5,29 +5,31 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Repository
 public class PaymentRepository {
     private List<Payment> paymentData = new ArrayList<>();
 
     public Payment save(Payment payment) {
-        for (int i = 0; i < paymentData.size(); i++) {
-            if (paymentData.get(i).getId().equals(payment.getId())) {
-                paymentData.set(i, payment);
-                return payment;
-            }
+        int index = IntStream.range(0, paymentData.size())
+                .filter(i -> paymentData.get(i).getId().equals(payment.getId()))
+                .findFirst()
+                .orElse(-1);
+
+        if (index != -1) {
+            paymentData.set(index, payment);
+        } else {
+            paymentData.add(payment);
         }
-        paymentData.add(payment);
         return payment;
     }
 
     public Payment findById(String id) {
-        for (Payment payment : paymentData) {
-            if (payment.getId().equals(id)) {
-                return payment;
-            }
-        }
-        return null;
+        return paymentData.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public List<Payment> findAll() {
