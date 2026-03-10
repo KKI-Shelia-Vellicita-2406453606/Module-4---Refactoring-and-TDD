@@ -58,3 +58,6 @@ Deployment link: https://shelia-eshop-074875ae89f3.herokuapp.com/
 2. My tests mostly followed the F.I.R.S.T. principles. They were fast because they only tested local logic and used mocks instead of external systems. They were independent and repeatable because each test used controlled setup data and did not depend on execution order. They were self-validating because assertions clearly determined pass or fail. They were also timely because I wrote the tests before implementing the code.
 
       However, I can still improve. In the future, I want to make tests more focused, add more edge-case coverage, and improve naming and structure so that each test is even easier to understand and maintain.
+
+Bonus 2:
+https://github.com/KKI-DavinMuhammadHijran-2406365244/Module-1---Coding-Standards/pull/16 
