@@ -1,5 +1,5 @@
 package id.ac.ui.cs.advprog.eshop.model;
-
+import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import lombok.Getter;
 import java.util.Map;
 import java.util.UUID;
@@ -40,18 +40,18 @@ public class Payment {
         }
 
         if (valid) {
-            setStatus("SUCCESS");
+            setStatus(PaymentStatus.SUCCESS.getValue());
         } else {
-            setStatus("REJECTED");
+            setStatus(PaymentStatus.REJECTED.getValue());
         }
     }
 
     public void setStatus(String status) {
-        if ("SUCCESS".equals(status) || "REJECTED".equals(status)) {
+        if (PaymentStatus.contains(status)) {
             this.status = status;
-            if ("SUCCESS".equals(status)) {
+            if (PaymentStatus.SUCCESS.getValue().equals(status)) {
                 this.order.setStatus("SUCCESS");
-            } else {
+            } else if (PaymentStatus.REJECTED.getValue().equals(status)) {
                 this.order.setStatus("FAILED");
             }
         } else {
