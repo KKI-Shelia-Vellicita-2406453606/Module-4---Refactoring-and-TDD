@@ -74,7 +74,7 @@ class PaymentControllerFunctionalTest {
 
     @Test
     void adminListShouldReturnAllPaymentsPage() throws Exception {
-        when(paymentService.getAllPayments()).thenReturn(List.of(payment));
+        when(paymentService.getAllPayment()).thenReturn(List.of(payment));
 
         mockMvc.perform(get("/payment/admin/list"))
                 .andExpect(status().isOk())
