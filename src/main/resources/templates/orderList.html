@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head><title>Order List</title></head>
+  <body>
+    <h1>Order List</h1>
+    <ul>
+      <li th:each="order : ${orders}" th:text="${order.id}"></li>
+    </ul>
+  </body>
+</html>

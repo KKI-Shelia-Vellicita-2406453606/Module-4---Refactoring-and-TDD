@@ -48,3 +48,16 @@ Deployment link: https://shelia-eshop-074875ae89f3.herokuapp.com/
 3. Explain the disadvantages of not applying SOLID principles to your project with examples.
 
       Conversely, failing to apply SOLID principles creates a rigid, fragile codebase where small changes often trigger cascading bugs. For instance, before applying LSP and SRP, CarController extended ProductController. This false inheritance meant the car controller absorbed dependencies it didn't need, which can cause severe AmbiguousMappingException errors in Spring Boot if routes overlap, ultimately crashing the application. If we had ignored OCP in the repository, adding a single new attribute to the Car model would require us to manually hunt down and update the setter methods in the update logic; forgetting even one line would lead to silent data loss when a user tries to edit a car. Lastly, without DIP, tightly coupling the CarController directly to CarServiceImpl means that if we ever wanted to swap out our in-memory list for a real database implementation, we would be forced to modify the controller code as well, violating the separation of concerns.
+
+## Reflection Module 04
+
+1. I found the TDD workflow useful in this exercise because it gave me a clear sequence of writing failing tests first, implementing the minimum code to make them pass, and then refactoring. This helped me focus on behavior and requirements before implementation. The tests also made it easier to catch mistakes early, especially for invalid input cases and update behavior.
+
+      Based on Percival’s self reflective questions, I think the workflow was useful, but I still need improvement. I mostly followed the scenarios listed in the tutorial, so my tests covered the required cases but not many additional edge cases. Next time, I want to think more deeply about possible boundary conditions, write tests that express one behavior more clearly, and use the refactoring stage more actively to improve code quality.
+
+2. My tests mostly followed the F.I.R.S.T. principles. They were fast because they only tested local logic and used mocks instead of external systems. They were independent and repeatable because each test used controlled setup data and did not depend on execution order. They were self-validating because assertions clearly determined pass or fail. They were also timely because I wrote the tests before implementing the code.
+
+      However, I can still improve. In the future, I want to make tests more focused, add more edge-case coverage, and improve naming and structure so that each test is even easier to understand and maintain.
+
+Bonus 2:
+https://github.com/KKI-DavinMuhammadHijran-2406365244/Module-1---Coding-Standards/pull/16 
