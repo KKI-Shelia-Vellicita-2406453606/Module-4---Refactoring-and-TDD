@@ -2,6 +2,7 @@ package id.ac.ui.cs.advprog.eshop.functional;
 
 import id.ac.ui.cs.advprog.eshop.model.Order;
 import id.ac.ui.cs.advprog.eshop.model.Payment;
+import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.service.OrderService;
 import id.ac.ui.cs.advprog.eshop.service.PaymentService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +23,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,17 +44,22 @@ class OrderControllerFunctionalTest {
 
     @BeforeEach
     void setUp() {
-        order = new Order();
-        order.setId("ORDER-1");
-        order.setAuthor("Fauzan");
+        List<Product> products = new ArrayList<>();
+
+        Product product = new Product();
+        product.setProductId("P1");
+        product.setProductName("Indomie");
+        product.setProductQuantity(1);
+        products.add(product);
+
+        order = new Order("ORDER-1", products, 1L, "Fauzan");
     }
 
     @Test
     void createOrderPageShouldReturnOrderForm() throws Exception {
         mockMvc.perform(get("/order/create"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("orderForm"))
-                .andExpect(model().attributeExists("order"));
+                .andExpect(view().name("orderForm"));
     }
 
     @Test
@@ -62,7 +71,7 @@ class OrderControllerFunctionalTest {
 
     @Test
     void historyPostShouldShowOrdersByAuthor() throws Exception {
-        when(orderService.getOrdersByAuthor("Fauzan"))
+        when(orderService.findAllByAuthor("Fauzan"))
                 .thenReturn(List.of(order));
 
         mockMvc.perform(post("/order/history")
@@ -74,7 +83,7 @@ class OrderControllerFunctionalTest {
 
     @Test
     void payPageShouldShowOrderPayPage() throws Exception {
-        when(orderService.getOrderById("ORDER-1")).thenReturn(order);
+        when(orderService.findById("ORDER-1")).thenReturn(order);
 
         mockMvc.perform(get("/order/pay/ORDER-1"))
                 .andExpect(status().isOk())
@@ -83,14 +92,13 @@ class OrderControllerFunctionalTest {
     }
 
     @Test
-    void payPostShouldCreatePaymentAndShowPaymentIdPage() throws Exception {
+    void payPostShouldCreatePaymentAndShowPaymentPage() throws Exception {
         Map<String, String> paymentData = new HashMap<>();
         paymentData.put("voucherCode", "ESHOP1234ABC5678");
 
-        Payment payment = new Payment();
-        payment.setId("PAYMENT-1");
+        Payment payment = new Payment(order, "Voucher Code", paymentData);
 
-        when(orderService.getOrderById("ORDER-1")).thenReturn(order);
+        when(orderService.findById("ORDER-1")).thenReturn(order);
         when(paymentService.addPayment(eq(order), eq("Voucher Code"), anyMap()))
                 .thenReturn(payment);
 
