@@ -13,8 +13,12 @@ import java.util.NoSuchElementException;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
+    private final PaymentRepository paymentRepository;
+
     @Autowired
-    private PaymentRepository paymentRepository;
+    public PaymentServiceImpl(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
 
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
