@@ -102,4 +102,55 @@ class PaymentServiceImplTest {
         List<Payment> foundPayments = paymentService.getAllPayment();
         assertEquals(1, foundPayments.size());
     }
+
+    @Test
+    void testAddPaymentVoucherValid() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP1234ABC5678");
+        Payment payment = new Payment(order, "Voucher Code", paymentData);
+
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+
+        Payment result = paymentService.addPayment(order, "Voucher Code", paymentData);
+        assertEquals("SUCCESS", result.getStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentVoucherInvalid() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "INVALIDCODE"); // Fails the 16-char ESHOP rule
+        Payment payment = new Payment(order, "Voucher Code", paymentData);
+
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+
+        Payment result = paymentService.addPayment(order, "Voucher Code", paymentData);
+        assertEquals("REJECTED", result.getStatus());
+    }
+
+    @Test
+    void testAddPaymentBankTransferValid() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", "BCA");
+        paymentData.put("referenceCode", "REF12345");
+        Payment payment = new Payment(order, "Bank Transfer", paymentData);
+
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+
+        Payment result = paymentService.addPayment(order, "Bank Transfer", paymentData);
+        assertEquals("SUCCESS", result.getStatus());
+    }
+
+    @Test
+    void testAddPaymentBankTransferInvalid() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", ""); // Fails the non-empty rule
+        paymentData.put("referenceCode", "REF12345");
+        Payment payment = new Payment(order, "Bank Transfer", paymentData);
+
+        when(paymentRepository.save(any(Payment.class))).thenReturn(payment);
+
+        Payment result = paymentService.addPayment(order, "Bank Transfer", paymentData);
+        assertEquals("REJECTED", result.getStatus());
+    }
 }
