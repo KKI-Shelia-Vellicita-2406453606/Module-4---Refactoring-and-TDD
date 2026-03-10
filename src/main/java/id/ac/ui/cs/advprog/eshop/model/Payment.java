@@ -1,6 +1,8 @@
 package id.ac.ui.cs.advprog.eshop.model;
+
 import id.ac.ui.cs.advprog.eshop.enums.PaymentStatus;
 import lombok.Getter;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -12,6 +14,12 @@ public class Payment {
     private Map<String, String> paymentData;
     private Order order;
 
+    private static final String METHOD_VOUCHER = "Voucher Code";
+    private static final String METHOD_BANK = "Bank Transfer";
+    private static final String VOUCHER_PREFIX = "ESHOP";
+    private static final int VOUCHER_LENGTH = 16;
+    private static final int VOUCHER_NUM_DIGITS = 8;
+
     public Payment(Order order, String method, Map<String, String> paymentData) {
         this.id = UUID.randomUUID().toString();
         this.order = order;
@@ -19,16 +27,19 @@ public class Payment {
         this.paymentData = paymentData;
 
         boolean valid = false;
-        if ("Voucher Code".equals(method)) {
+
+        if (METHOD_VOUCHER.equals(method)) {
             String voucher = paymentData.get("voucherCode");
-            if (voucher != null && voucher.length() == 16 && voucher.startsWith("ESHOP")) {
+            if (voucher != null && voucher.length() == VOUCHER_LENGTH && voucher.startsWith(VOUCHER_PREFIX)) {
                 int numCount = 0;
                 for (char c : voucher.toCharArray()) {
                     if (Character.isDigit(c)) numCount++;
                 }
-                if (numCount == 8) valid = true;
+                if (numCount == VOUCHER_NUM_DIGITS) {
+                    valid = true;
+                }
             }
-        } else if ("Bank Transfer".equals(method)) {
+        } else if (METHOD_BANK.equals(method)) {
             String bankName = paymentData.get("bankName");
             String refCode = paymentData.get("referenceCode");
             if (bankName != null && !bankName.trim().isEmpty() &&
@@ -40,9 +51,11 @@ public class Payment {
         }
 
         if (valid) {
-            setStatus(PaymentStatus.SUCCESS.getValue());
+            this.status = PaymentStatus.SUCCESS.getValue();
+            this.order.setStatus(PaymentStatus.SUCCESS.getValue());
         } else {
-            setStatus(PaymentStatus.REJECTED.getValue());
+            this.status = PaymentStatus.REJECTED.getValue();
+            this.order.setStatus("FAILED");
         }
     }
 
