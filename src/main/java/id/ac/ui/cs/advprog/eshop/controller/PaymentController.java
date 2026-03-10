@@ -27,7 +27,7 @@ public class PaymentController {
 
     @GetMapping("/detail/{paymentId}")
     public String paymentDetail(@PathVariable String paymentId, Model model) {
-        model.addAttribute("payment", paymentService.getPayment(paymentId));
+        addPaymentToModel(paymentId, model);
         return "paymentDetail";
     }
 
@@ -39,7 +39,7 @@ public class PaymentController {
 
     @GetMapping("/admin/detail/{paymentId}")
     public String adminDetail(@PathVariable String paymentId, Model model) {
-        model.addAttribute("payment", paymentService.getPayment(paymentId));
+        addPaymentToModel(paymentId, model);
         return "paymentAdminDetail";
     }
 
@@ -51,5 +51,10 @@ public class PaymentController {
         Payment updatedPayment = paymentService.setStatus(payment, status);
         model.addAttribute("payment", updatedPayment);
         return "paymentAdminDetail";
+    }
+
+    private void addPaymentToModel(String paymentId, Model model) {
+        Payment payment = paymentService.getPayment(paymentId);
+        model.addAttribute("payment", payment);
     }
 }
